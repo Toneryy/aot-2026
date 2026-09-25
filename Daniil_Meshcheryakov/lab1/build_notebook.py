@@ -1,4 +1,3 @@
-"""Собирает lab1.ipynb из ячеек ниже (запуск: python build_notebook.py)."""
 import nbformat as nbf
 
 cells = []
