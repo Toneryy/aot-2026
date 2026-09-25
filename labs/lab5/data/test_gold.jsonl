@@ -1,0 +1,30 @@
+{"id": "q004", "doc_id": "doc_09", "answer": "Гранитогорск", "answer_key": "гранитогорск", "answerable": true, "type": "город филиала по руководителю", "evidence_ids": [30, 34]}
+{"id": "q006", "doc_id": "doc_15", "answer": "Николай Родионов", "answer_key": "родионов", "answerable": true, "type": "руководитель в год события", "evidence_ids": [6, 7]}
+{"id": "q011", "doc_id": "doc_19", "answer": "с компанией «Кварц-Систем»", "answer_key": "кварц-систем", "answerable": true, "type": "партнер", "evidence_ids": [25]}
+{"id": "q014", "doc_id": "doc_29", "answer": "улица Солнечная, 86", "answer_key": "солнечн", "answerable": true, "type": "адрес", "evidence_ids": [9]}
+{"id": "q017", "doc_id": "doc_21", "answer": null, "answer_key": null, "answerable": false, "type": "премия в отсутствующем году", "evidence_ids": []}
+{"id": "q024", "doc_id": "doc_17", "answer": "Игорь Белов", "answer_key": "белов", "answerable": true, "type": "руководитель в году", "evidence_ids": [3]}
+{"id": "q029", "doc_id": "doc_25", "answer": "«Стальной маятник»", "answer_key": "стальной маятник", "answerable": true, "type": "премия в году", "evidence_ids": [24]}
+{"id": "q035", "doc_id": "doc_20", "answer": "888", "answer_key": "888", "answerable": true, "type": "сотрудники в году", "evidence_ids": [24]}
+{"id": "q038", "doc_id": "doc_20", "answer": null, "answer_key": null, "answerable": false, "type": "отсутствующий показатель", "evidence_ids": []}
+{"id": "q041", "doc_id": "doc_01", "answer": "Полина Абрамова", "answer_key": "абрамов", "answerable": true, "type": "руководитель в году", "evidence_ids": [8]}
+{"id": "q043", "doc_id": "doc_02", "answer": null, "answer_key": null, "answerable": false, "type": "премия в отсутствующем году", "evidence_ids": []}
+{"id": "q045", "doc_id": "doc_26", "answer": "Олег Воронин", "answer_key": "воронин", "answerable": true, "type": "руководитель в год события", "evidence_ids": [4, 45]}
+{"id": "q048", "doc_id": "doc_10", "answer": "Григорий Горбунов", "answer_key": "горбунов", "answerable": true, "type": "основатель", "evidence_ids": [2]}
+{"id": "q050", "doc_id": "doc_07", "answer": "Вера Громова", "answer_key": "громов", "answerable": true, "type": "руководитель в год события", "evidence_ids": [3, 11]}
+{"id": "q056", "doc_id": "doc_20", "answer": "1993", "answer_key": "1993", "answerable": true, "type": "год реконструкции", "evidence_ids": [10]}
+{"id": "q058", "doc_id": "doc_12", "answer": "улица Заводская", "answer_key": "заводск", "answerable": true, "type": "старый адрес", "evidence_ids": [8]}
+{"id": "q063", "doc_id": "doc_06", "answer": null, "answer_key": null, "answerable": false, "type": "несуществующий филиал", "evidence_ids": []}
+{"id": "q065", "doc_id": "doc_13", "answer": "улица Лесная", "answer_key": "лесн", "answerable": true, "type": "старый адрес", "evidence_ids": [10]}
+{"id": "q067", "doc_id": "doc_16", "answer": null, "answer_key": null, "answerable": false, "type": "премия в отсутствующем году", "evidence_ids": []}
+{"id": "q068", "doc_id": "doc_14", "answer": "1995", "answer_key": "1995", "answerable": true, "type": "год открытия филиала", "evidence_ids": [32]}
+{"id": "q071", "doc_id": "doc_28", "answer": "278 млн рублей", "answer_key": "278", "answerable": true, "type": "бюджет в году", "evidence_ids": [18]}
+{"id": "q073", "doc_id": "doc_23", "answer": "2022", "answer_key": "2022", "answerable": true, "type": "год премии", "evidence_ids": [40]}
+{"id": "q075", "doc_id": "doc_25", "answer": "Юрий Филатов", "answer_key": "филатов", "answerable": true, "type": "глава филиала", "evidence_ids": [17]}
+{"id": "q078", "doc_id": "doc_29", "answer": "6100", "answer_key": "6100", "answerable": true, "type": "посетители в году", "evidence_ids": [32]}
+{"id": "q080", "doc_id": "doc_15", "answer": "1199", "answer_key": "1199", "answerable": true, "type": "сотрудники в году", "evidence_ids": [11]}
+{"id": "q089", "doc_id": "doc_22", "answer": null, "answer_key": null, "answerable": false, "type": "отсутствующее событие", "evidence_ids": []}
+{"id": "q091", "doc_id": "doc_04", "answer": "2023", "answer_key": "2023", "answerable": true, "type": "год премии", "evidence_ids": [28]}
+{"id": "q094", "doc_id": "doc_29", "answer": "с фондом «Открытый горизонт»", "answer_key": "открытый горизонт", "answerable": true, "type": "партнер", "evidence_ids": [31]}
+{"id": "q095", "doc_id": "doc_29", "answer": null, "answer_key": null, "answerable": false, "type": "отсутствующее событие", "evidence_ids": []}
+{"id": "q098", "doc_id": "doc_04", "answer": "Николай Хромов", "answer_key": "хромов", "answerable": true, "type": "руководитель в год события", "evidence_ids": [7, 11]}
