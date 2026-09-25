@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+~$*
+
+lab*/data/
+lab1/outputs/sample_150.csv
