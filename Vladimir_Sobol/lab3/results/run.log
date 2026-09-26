@@ -1,0 +1,46 @@
+[transformers] PyTorch was not found. Models won't be available and only tokenizers, configuration and file/data utilities can be used.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+train {'neutral': 1634, 'positive': 913, 'negative': 453}
+validation {'neutral': 272, 'positive': 152, 'negative': 76}
+test {'neutral': 321, 'positive': 121, 'negative': 58}
+stress {'neutral': 34, 'positive': 33, 'negative': 33}
+     C class_weight  accuracy  macro_f1  f1_positive  f1_negative  f1_neutral
+1000.0     balanced     0.652     0.576        0.589        0.397       0.742
+3000.0     balanced     0.640     0.571        0.575        0.409       0.729
+ 100.0     balanced     0.644     0.569        0.591        0.380       0.735
+ 300.0     balanced     0.642     0.568        0.578        0.391       0.734
+  10.0     balanced     0.634     0.564        0.580        0.386       0.724
+tfidf best 1000.0 balanced fit 0.27 s
+        a            b  diff  ci_low  ci_high  share_above_0
+ few_shot tfidf_logreg 0.088   0.025    0.148          0.998
+zero_shot tfidf_logreg 0.079   0.018    0.140          0.995
+ few_shot    zero_shot 0.010  -0.018    0.041          0.730
+                               0             1            2            3
+method                  baseline  tfidf_logreg    zero_shot     few_shot
+test_accuracy              0.642          0.66        0.646        0.662
+test_macro_f1              0.261         0.561        0.639        0.649
+test_macro_f1_ci     0.250-0.271   0.513-0.608  0.591-0.681  0.600-0.688
+stress_accuracy             0.34           0.4         0.88         0.87
+stress_macro_f1            0.169         0.362         0.88         0.87
+f1_drop                    0.092         0.198       -0.241       -0.222
+ms_per_text_batch            0.0         0.008          NaN          NaN
+ms_per_text_single         0.016         0.268      446.803      451.713
+tokens_in_mean               NaN           NaN      338.174      564.174
+tokens_out_mean              NaN           NaN          7.0          7.0
+ollama_in_mean               NaN           NaN      338.174      564.174
+ollama_out_mean              NaN           NaN          7.0          7.0
+invalid_json                 NaN           NaN          0.0          0.0
+tokens_in_per_1000           NaN           NaN     338174.0     564174.0
+tokens_out_per_1000          NaN           NaN       7000.0       7000.0
+minutes_per_1000             0.0         0.004        7.447        7.529
+cost_per_1000_rub            0.0           0.0          0.0          0.0
+ms_model_compute             NaN           NaN      441.541      445.558
+max_queue_wait_ms            NaN           NaN       16.634       22.771
+            baseline  tfidf_logreg  zero_shot  few_shot
+phenomenon                                             
+irony           0.15          0.20       0.75      0.65
+mixed           0.40          0.55       0.90      0.90
+negation        0.40          0.30       1.00      1.00
+quote           0.35          0.45       0.80      0.85
+typos           0.40          0.50       0.95      0.95
+tfidf fit s 0.27
