@@ -1,0 +1,13 @@
+question_id,question_type,gold,confidence_B,confidence_C,ev_f1_B,ev_f1_C,status_B,status_C,same_status
+Q01,direct,entailed,1.0,1.0,1.0,1.0,entailed,entailed,True
+Q02,direct,entailed,1.0,1.0,0.2857142857142857,1.0,entailed,entailed,True
+Q03,multihop,entailed,0.95,0.95,0.28571428571428575,0.28571428571428575,entailed,entailed,True
+Q04,multihop,contradicted,0.95,0.95,0.28571428571428575,0.0,entailed,entailed,True
+Q05,temporal,entailed,1.0,1.0,1.0,0.7499999999999999,entailed,entailed,True
+Q06,temporal,contradicted,1.0,1.0,0.8,0.5714285714285715,entailed,entailed,True
+Q07,rule_exception,entailed,0.95,0.95,0.4444444444444445,0.5333333333333333,entailed,entailed,True
+Q08,rule_exception,contradicted,1.0,0.95,0.0,0.6666666666666666,entailed,entailed,True
+Q09,contradiction,contradicted,0.95,0.95,0.0,0.0,entailed,entailed,True
+Q10,contradiction,both,0.95,0.8,0.3333333333333333,0.6666666666666666,entailed,both,False
+Q11,insufficient,insufficient,0.95,1.0,0.0,0.0,entailed,entailed,True
+Q12,insufficient,insufficient,0.7,0.8,0.0,0.14285714285714288,insufficient,both,False

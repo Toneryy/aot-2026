@@ -1,0 +1,4 @@
+mode,accuracy,ev_f1,cev_recall,both_recall_all,insuf_recall_all,confidence_mean
+A,0.417,0.23,0.0,0.0,0.0,0.971
+B,0.333,0.445,0.0,1.0,0.0,0.929
+C,0.333,0.514,0.125,1.0,0.0,0.871

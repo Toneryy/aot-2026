@@ -1,0 +1,4 @@
+mode,name,n_base,accuracy,ev_precision,ev_recall,ev_f1,cev_recall,both_precision_all,both_recall_all,insuf_precision_all,insuf_recall_all,confident_when_insufficient,valid_first_try,invalid_final,prompt_tokens_mean,completion_tokens_mean,latency_median_s,latency_mean_s,confidence_mean,accuracy_all_runs,n_all_runs
+A,Полный контекст,12,0.5,0.265,0.294,0.262,0.0,,0.0,0.6,0.375,0.625,1.0,0,15865,163,8.41,15.19,0.917,0.325,40
+B,BM25 top-15,12,0.5,0.368,0.436,0.37,0.0,,0.0,0.75,0.375,0.625,1.0,0,1311,146,8.11,8.17,0.95,0.325,40
+C,p-adic контекст,12,0.5,0.459,0.525,0.468,0.125,0.714,0.357,1.0,0.125,0.625,1.0,0,1500,142,8.56,8.6,0.946,0.4,40

@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.5, pytest-9.1.1, pluggy-1.6.0 -- /Users/vladimirsobol/Documents/автоматическая обработка тектов/лаба 6/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/vladimirsobol/Documents/автоматическая обработка тектов/лаба 6
+configfile: pytest.ini
+testpaths: tests
+plugins: anyio-4.15.1
+collecting ... collected 35 items
+
+tests/test_app.py::test_app_starts_and_shows_context PASSED              [  2%]
+tests/test_app.py::test_app_modes_and_stress_controls PASSED             [  5%]
+tests/test_data.py::test_dossier_is_consistent PASSED                    [  8%]
+tests/test_data.py::test_required_volume PASSED                          [ 11%]
+tests/test_data.py::test_evidence_is_verbatim PASSED                     [ 14%]
+tests/test_data.py::test_no_forbidden_characters PASSED                  [ 17%]
+tests/test_data.py::test_removal_changes_one_factor_and_removes_text PASSED [ 20%]
+tests/test_data.py::test_contradiction_adds_one_document_and_one_claim PASSED [ 22%]
+tests/test_llm.py::test_llm_unavailable PASSED                           [ 25%]
+tests/test_llm.py::test_retry_once_after_invalid_answer PASSED           [ 28%]
+tests/test_llm.py::test_only_one_retry PASSED                            [ 31%]
+tests/test_llm.py::test_real_model_answers_direct_question PASSED        [ 34%]
+tests/test_padic.py::test_same_path_distance_is_zero PASSED              [ 37%]
+tests/test_padic.py::test_difference_on_each_level[p0-q0-expected0] PASSED [ 40%]
+tests/test_padic.py::test_difference_on_each_level[p1-q1-expected1] PASSED [ 42%]
+tests/test_padic.py::test_difference_on_each_level[p2-q2-expected2] PASSED [ 45%]
+tests/test_padic.py::test_difference_on_each_level[p3-q3-expected3] PASSED [ 48%]
+tests/test_padic.py::test_difference_on_each_level[p4-q4-expected4] PASSED [ 51%]
+tests/test_padic.py::test_difference_on_each_level[p5-q5-expected5] PASSED [ 54%]
+tests/test_padic.py::test_ultrametric_inequality PASSED                  [ 57%]
+tests/test_padic.py::test_code_formula_and_inverse PASSED                [ 60%]
+tests/test_padic.py::test_distance_by_code_matches_prefix_distance_and_is_not_abs PASSED [ 62%]
+tests/test_retrieval_context.py::test_bm25_returns_at_most_15 PASSED     [ 65%]
+tests/test_retrieval_context.py::test_modes_b_and_c_get_same_claim_ids PASSED [ 68%]
+tests/test_retrieval_context.py::test_padic_context_groups_by_path_and_time PASSED [ 71%]
+tests/test_retrieval_context.py::test_padic_context_does_not_depend_on_input_order PASSED [ 74%]
+tests/test_retrieval_context.py::test_full_context_has_markers_for_document_claims PASSED [ 77%]
+tests/test_schemas.py::test_valid_answer_passes PASSED                   [ 80%]
+tests/test_schemas.py::test_invalid_json_from_llm PASSED                 [ 82%]
+tests/test_schemas.py::test_nonexistent_evidence_id PASSED               [ 85%]
+tests/test_schemas.py::test_id_outside_context_is_warning PASSED         [ 88%]
+tests/test_schemas.py::test_both_without_counterevidence PASSED          [ 91%]
+tests/test_schemas.py::test_insufficient_with_invented_fact PASSED       [ 94%]
+tests/test_schemas.py::test_insufficient_rules PASSED                    [ 97%]
+tests/test_schemas.py::test_converted_time_is_not_invented PASSED        [100%]
+
+============================== 35 passed in 5.44s ==============================
