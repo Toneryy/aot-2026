@@ -29,7 +29,7 @@ tests/test_extractor.py::test_item_supported_by_fragment_of_other_attempt PASSED
 tests/test_extractor.py::test_same_item_from_two_attempts_is_kept_once PASSED [ 96%]
 tests/test_extractor.py::test_drug_without_fragment_is_grounded_in_text_but_effect_is_not PASSED [100%]
 
-============================= 26 passed in 14.20s =============================
+============================= 26 passed in 13.98s =============================
 
 === запуск 2
 ============================= test session starts =============================
@@ -62,7 +62,7 @@ tests/test_extractor.py::test_item_supported_by_fragment_of_other_attempt PASSED
 tests/test_extractor.py::test_same_item_from_two_attempts_is_kept_once PASSED [ 96%]
 tests/test_extractor.py::test_drug_without_fragment_is_grounded_in_text_but_effect_is_not PASSED [100%]
 
-============================= 26 passed in 14.07s =============================
+============================= 26 passed in 13.98s =============================
 
 === запуск 3
 ============================= test session starts =============================
@@ -95,4 +95,4 @@ tests/test_extractor.py::test_item_supported_by_fragment_of_other_attempt PASSED
 tests/test_extractor.py::test_same_item_from_two_attempts_is_kept_once PASSED [ 96%]
 tests/test_extractor.py::test_drug_without_fragment_is_grounded_in_text_but_effect_is_not PASSED [100%]
 
-============================= 26 passed in 14.22s =============================
+============================= 26 passed in 14.03s =============================

@@ -24,7 +24,7 @@
 
 ## Запуск
 
-Python 3.11, зависимости из `../requirements.txt`, команды из папки `Daniil_Meshcheryakov`.
+Python 3.11. Пакеты: pydantic 2.14.1, pytest 9.1.1, snowballstemmer 3.1.1, pandas 3.0.6, matplotlib 3.11.2, jupyter и nbconvert (полный список в `../requirements.txt` в репозитории). Команды из папки `Daniil_Meshcheryakov`.
 
 ```
 ollama pull qwen3:4b-instruct-2507-q4_K_M

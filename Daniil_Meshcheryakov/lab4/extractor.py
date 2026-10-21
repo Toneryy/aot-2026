@@ -108,8 +108,8 @@ def loose_json(raw):
     return value if isinstance(value, dict) else None
 
 
-def find_verbatim(fragment, text):
-    """Точная подстрока текста по границам слов; различие допускается только в цепочках пробелов
+def verbatim_match(fragment, text):
+    """Вхождение фрагмента в текст по границам слов; различие допускается только в цепочках пробелов
     и переносов строк между словами."""
     words = fragment.split()
     if not words:
@@ -119,18 +119,21 @@ def find_verbatim(fragment, text):
         pattern = r"(?<!\w)" + pattern
     if re.search(r"\w$", words[-1]):
         pattern += r"(?!\w)"
-    match = re.search(pattern, text)
+    return re.search(pattern, text)
+
+
+def find_verbatim(fragment, text):
+    match = verbatim_match(fragment, text)
     return text[match.start():match.end()] if match else None
 
 
 def sentence_with(fragment, text):
     """Предложение (строка отзыва), в котором фрагмент встречается дословно."""
-    exact = find_verbatim(fragment, text)
-    if exact is None:
+    match = verbatim_match(fragment, text)
+    if match is None:
         return None
-    start = text.find(exact)
-    line_start = text.rfind("\n", 0, start) + 1
-    line_end = text.find("\n", start + len(exact))
+    line_start = text.rfind("\n", 0, match.start()) + 1
+    line_end = text.find("\n", match.end())
     return text[line_start:line_end if line_end != -1 else len(text)].strip()
 
 
