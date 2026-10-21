@@ -13,13 +13,16 @@ from schema import ALL_FIELDS, FIELDS, Extraction, describe_errors
 
 MAX_RETRIES = 1
 PLACEHOLDER = "{{TEXT}}"
+GROUNDED_FIELDS = ("drug", "indication")
 RETRY_MESSAGE = (
     "Ответ не прошел проверку:\n{errors}\n"
     "Исправь эти ошибки и верни JSON целиком заново: ровно пять полей drug, indication, "
     "positive_effect, adverse_reaction, evidence. Каждый фрагмент evidence скопируй из отзыва "
     "дословно, с тем же регистром букв и теми же опечатками: бери его из ближайшего участка текста, "
-    "указанного выше. У каждого элемента других полей должен быть свой фрагмент в evidence. Только JSON."
+    "указанного выше. Элементы, которые в отзыве есть, не удаляй, а добавь для них фрагменты; "
+    "убирай только то, чего в отзыве нет. Только JSON."
 )
+YO, YE = chr(0x451), chr(0x435)
 
 
 def empty_result():
@@ -45,7 +48,7 @@ class OllamaClient:
             with self._opener.open(self.url + "/api/tags", timeout=5) as response:
                 names = [m["name"] for m in json.loads(response.read())["models"]]
             return self.model in names
-        except OSError:
+        except (OSError, ValueError, KeyError):
             return False
 
     def chat(self, messages):
@@ -70,11 +73,21 @@ def build_messages(template, text):
     return messages
 
 
+def _no_duplicate_keys(pairs):
+    keys = [key for key, _ in pairs]
+    repeated = sorted({key for key in keys if keys.count(key) > 1})
+    if repeated:
+        raise ValueError("поле «" + "», «".join(repeated) + "» указано дважды")
+    return dict(pairs)
+
+
 def parse_json(raw):
     try:
-        value = json.loads(raw.strip())
+        value = json.loads(raw.strip(), object_pairs_hook=_no_duplicate_keys)
     except json.JSONDecodeError as error:
         return None, f"ответ не разбирается как JSON ({error.msg}, позиция {error.pos})"
+    except ValueError as error:
+        return None, f"ответ не разбирается как JSON: {error}"
     if not isinstance(value, dict):
         return None, "ответ должен быть JSON-объектом"
     return value, None
@@ -96,12 +109,29 @@ def loose_json(raw):
 
 
 def find_verbatim(fragment, text):
-    """Точная подстрока текста; различие допускается только в пробелах и переносах строк."""
+    """Точная подстрока текста по границам слов; различие допускается только в цепочках пробелов
+    и переносов строк между словами."""
     words = fragment.split()
     if not words:
         return None
-    match = re.search(r"\s+".join(map(re.escape, words)), text)
+    pattern = r"\s+".join(map(re.escape, words))
+    if re.match(r"\w", words[0]):
+        pattern = r"(?<!\w)" + pattern
+    if re.search(r"\w$", words[-1]):
+        pattern += r"(?!\w)"
+    match = re.search(pattern, text)
     return text[match.start():match.end()] if match else None
+
+
+def sentence_with(fragment, text):
+    """Предложение (строка отзыва), в котором фрагмент встречается дословно."""
+    exact = find_verbatim(fragment, text)
+    if exact is None:
+        return None
+    start = text.find(exact)
+    line_start = text.rfind("\n", 0, start) + 1
+    line_end = text.find("\n", start + len(exact))
+    return text[line_start:line_end if line_end != -1 else len(text)].strip()
 
 
 def closest_passage(fragment, text):
@@ -124,22 +154,24 @@ STOP_WORDS = {"и", "в", "во", "на", "с", "со", "от", "по", "за", 
               "до", "но", "а", "же", "как", "что", "это", "так", "то", "бы", "ли", "очень", "уже", "я", "мне",
               "меня", "мы", "нам", "нас", "его", "ее", "их", "он", "она", "они", "после", "еще", "все",
               "было", "был", "была", "были", "стало", "стал", "стала"}
-
-
-def normalize(value):
-    return re.sub(r"\s+", " ", value.lower().replace("\u0451", "\u0435")).strip(" .,!?;:«»\"'()")
-
-
-def stems(value):
-    tokens = re.findall(r"[a-zа-я0-9]+", value.lower().replace("\u0451", "\u0435"))
-    return [_stemmer.stemWord(t) for t in tokens if t not in STOP_WORDS and len(t) > 1]
-
-
 NEGATIONS = {"не", "ни", "нет"}
 
 
+def normalize(value):
+    return re.sub(r"\s+", " ", value.lower().replace(YO, YE)).strip(" .,!?;:«»\"'()")
+
+
+def stems(value):
+    tokens = re.findall(r"[a-zа-я0-9]+", value.lower().replace(YO, YE))
+    return [_stemmer.stemWord(t) for t in tokens if t not in STOP_WORDS and len(t) > 1]
+
+
+def content_stems(value):
+    return [s for s in stems(value) if s not in NEGATIONS]
+
+
 def tokens_match(a, b):
-    """Совпадение основ: равны, одна продолжает другую или отличаются опечаткой (основы от 6 букв)."""
+    """Совпадение основ: равны, одна продолжает другую (от 4 букв) или отличаются опечаткой (от 6 букв)."""
     if a == b or (min(len(a), len(b)) >= 4 and (a.startswith(b) or b.startswith(a))):
         return True
     return min(len(a), len(b)) >= 6 and difflib.SequenceMatcher(None, a, b).ratio() >= 0.85
@@ -161,25 +193,30 @@ def similarity(a, b):
     return (coverage(sa, sb) * len(sa) + coverage(sb, sa) * len(sb)) / (len(sa) + len(sb))
 
 
-GENERIC_DRUG_WORDS = ("таблетки таблеток таблетка капли капель капсулы капсул мазь крем гель свечи свечей сироп "
-                      "спрей порошок раствор настойка ампулы уколы препарат лекарство средство антибиотик "
-                      "противовирусный противовирусное успокоительный успокоительное снотворное иммуномодулятор "
-                      "жаропонижающее обезболивающее гомеопатия детский успокаивающее седативное витамины витаминов "
-                      "вакцина вакцину вакцины иммуностимулятор бальзам леденцы")
+GENERIC_DRUG_WORDS = ("таблетки таблеток таблетка таблетками капли капель каплями капсулы капсул мазь мази крем "
+                      "гель свечи свечей свечами сироп сиропы спрей порошок порошки раствор настойка настойки "
+                      "ампулы уколы препарат препараты лекарство лекарства средство средства антибиотик антибиотики "
+                      "противовирусный противовирусное противовирусные успокоительный успокоительное "
+                      "успокоительные снотворное снотворные иммуномодулятор иммуномодуляторы жаропонижающее "
+                      "обезболивающее гомеопатия гомеопатический детский детские успокаивающее седативное "
+                      "витамины витаминов вакцина вакцину вакцины иммуностимулятор бальзам леденцы глазные "
+                      "назальный сосудосуживающие гормональная этот эта эти этого этой этим этих данный данные "
+                      "данного такой такие")
 GENERIC_DRUG_STEMS = set(stems(GENERIC_DRUG_WORDS))
 
 
 def is_generic_drug(item):
+    """В элементе только слова формы выпуска, группы средств и указательные слова."""
     item_stems = stems(item)
-    return bool(item_stems) and all(any(tokens_match(s, g) for g in GENERIC_DRUG_STEMS) for s in item_stems)
+    return bool(item_stems) and all(s in GENERIC_DRUG_STEMS for s in item_stems)
 
 
 def is_supported(item, fragments):
     """Элемент подтвержден, если хотя бы половина его основ есть в одном фрагменте evidence.
     Частицы отрицания не считаются: иначе одно "не" подтверждает половину короткого элемента."""
-    item_stems = [s for s in stems(item) if s not in NEGATIONS]
+    item_stems = content_stems(item)
     if not item_stems:
-        return any(normalize(item) in normalize(fragment) for fragment in fragments)
+        return False
     return any(coverage(item_stems, stems(fragment)) >= 0.5 for fragment in fragments)
 
 
@@ -193,12 +230,22 @@ def dedupe(values):
     return result
 
 
+def same_item(name, a, b):
+    """Один элемент в двух формулировках: значимые основы одного целиком входят в другой.
+    Для drug только точное совпадение: «Кавинтон» и «Кавинтон форте» это разные препараты."""
+    if normalize(a) == normalize(b):
+        return True
+    sa, sb = content_stems(a), content_stems(b)
+    return name != "drug" and bool(sa and sb and (coverage(sa, sb) == 1.0 or coverage(sb, sa) == 1.0))
+
+
 @dataclass
 class Check:
     data: dict | None
     errors: list = field(default_factory=list)
     bad_evidence: list = field(default_factory=list)
     unsupported: list = field(default_factory=list)
+    invalid_items: list = field(default_factory=list)
 
     @property
     def structure_ok(self):
@@ -208,9 +255,13 @@ class Check:
     def ok(self):
         return not self.errors
 
+    @property
+    def rejected_items(self):
+        return self.invalid_items + self.unsupported
+
 
 def check_response(raw, text):
-    """JSON, схема Pydantic, дословность evidence, названия в drug, опора каждого элемента на evidence."""
+    """JSON, схема Pydantic, дословность evidence, значимые слова и названия, опора элементов на evidence."""
     value, error = parse_json(raw)
     if error:
         return Check(None, [error])
@@ -218,39 +269,92 @@ def check_response(raw, text):
         parsed = Extraction.model_validate(value)
     except ValidationError as validation_error:
         return Check(None, describe_errors(validation_error))
-    data = {name: dedupe(values) for name, values in parsed.model_dump().items()}
+    data = parsed.model_dump()
     errors, found, bad = [], [], []
     for fragment in data["evidence"]:
         exact = find_verbatim(fragment, text)
-        if exact is None:
+        if exact is not None:
+            found.append(exact)
+        elif fragment not in bad:
             bad.append(fragment)
             errors.append(f"фрагмента evidence «{fragment}» нет в тексте дословно; "
                           f"ближайший участок текста: «{closest_passage(fragment, text)}»")
-        else:
-            found.append(exact)
-    data["evidence"] = dedupe(found)
-    generic = [("drug", item) for item in data["drug"] if is_generic_drug(item)]
-    for _, item in generic:
-        errors.append(f"«{item}» в поле drug не название препарата, а форма выпуска или группа средств")
+    data = {name: dedupe(data[name]) for name in FIELDS} | {"evidence": dedupe(found)}
+    invalid = []
+    for name in FIELDS:
+        for item in data[name]:
+            if not content_stems(item):
+                invalid.append((name, item))
+                errors.append(f"в элементе «{item}» поля {name} нет значимых слов")
+            elif name == "drug" and is_generic_drug(item):
+                invalid.append((name, item))
+                errors.append(f"«{item}» в поле drug не название препарата, а форма выпуска или группа средств")
     unsupported = [(name, item) for name in FIELDS for item in data[name]
-                   if not is_supported(item, data["evidence"]) and (name, item) not in generic]
+                   if (name, item) not in invalid and not is_supported(item, data["evidence"])]
     for name, item in unsupported:
         errors.append(f"для «{item}» из поля {name} нет подтверждающего фрагмента в evidence")
-    return Check(data, errors, bad, generic + unsupported)
+    return Check(data, errors, bad, unsupported, invalid)
 
 
-def without_unsupported(check):
-    data = {name: list(values) for name, values in check.data.items()}
-    for name, item in check.unsupported:
-        data[name].remove(item)
-    return data
+def assemble(checks, text):
+    """Итоговый ответ из всех структурно целых попыток, начиная с последней.
+
+    Опора для элемента ищется во всех дословных фрагментах модели из обеих попыток. Препарат или показание
+    без опоры остается, только если сам элемент дословно есть в отзыве: тогда в evidence добавляется
+    предложение, где он стоит. Остальное удаляется. Один элемент в двух формулировках берется один раз.
+    Так каждый элемент ответа опирается на дословный фрагмент отзыва.
+    """
+    usable = [c for c in checks if c.structure_ok]
+    model_evidence = dedupe(e for c in usable for e in c.data["evidence"])
+    result, grounded, rejected = empty_result(), [], []
+    result["evidence"] = list(model_evidence)
+    for check in reversed(usable):
+        for name in FIELDS:
+            for item in check.data[name]:
+                if (name, item) in check.invalid_items:
+                    rejected.append((name, item))
+                    continue
+                sentence = None
+                if (name, item) in check.unsupported and not is_supported(item, model_evidence):
+                    sentence = sentence_with(item, text) if name in GROUNDED_FIELDS else None
+                    if sentence is None:
+                        rejected.append((name, item))
+                        continue
+                if any(same_item(name, item, kept) for kept in result[name]):
+                    continue
+                result[name].append(item)
+                if sentence:
+                    result["evidence"].append(sentence)
+                    grounded.append((name, item))
+    result["evidence"] = dedupe(result["evidence"])
+    removed = []
+    for name, item in rejected:
+        if not any(same_item(name, item, x) for x in result[name] + [r for n, r in removed if n == name]):
+            removed.append((name, item))
+    assert all(is_supported(item, result["evidence"]) for name in FIELDS for item in result[name])
+    return result, removed, grounded
+
+
+def finalize(checks, text):
+    """Статус и итоговый ответ по результатам проверки всех попыток."""
+    if not any(c.structure_ok for c in checks):
+        return {"status": "rejected", "result": empty_result(), "removed_evidence": [], "removed_items": [],
+                "grounded_items": []}
+    if checks[-1].ok:
+        status = "valid" if len(checks) == 1 else "fixed_by_retry"
+    else:
+        status = "cleaned"
+    result, removed, grounded = assemble(checks, text)
+    bad = dedupe(e for c in checks if c.structure_ok for e in c.bad_evidence)
+    return {"status": status, "result": result, "removed_evidence": bad if status == "cleaned" else [],
+            "removed_items": removed, "grounded_items": grounded}
 
 
 class Extractor:
     """version_2, проверка ответа и ровно один повторный запрос с описанием ошибок.
 
-    Если и после повтора есть ошибки, недословные фрагменты, формы и группы в drug и элементы без опоры
-    удаляются (статус cleaned). Если структура сломана в обеих попытках, результат пустой (rejected).
+    Статусы: valid (первая попытка прошла проверку), fixed_by_retry (прошла вторая), cleaned (вторая тоже
+    с ошибками, неподтвержденное удалено), rejected (структура сломана в обеих попытках), empty_text.
     """
 
     def __init__(self, client, template):
@@ -260,7 +364,7 @@ class Extractor:
     def extract(self, text):
         if not text or not text.strip():
             return {"status": "empty_text", "result": empty_result(), "attempts": [],
-                    "removed_evidence": [], "removed_items": []}
+                    "removed_evidence": [], "removed_items": [], "grounded_items": []}
         messages = build_messages(self.template, text)
         attempts, checks = [], []
         for attempt in range(1 + MAX_RETRIES):
@@ -271,14 +375,8 @@ class Extractor:
                              "seconds": reply["seconds"]})
             checks.append(check)
             if check.ok:
-                return {"status": "valid" if attempt == 0 else "fixed_by_retry", "result": check.data,
-                        "attempts": attempts, "removed_evidence": [], "removed_items": []}
-            errors = "\n".join(f"- {e}" for e in check.errors[:12])
+                break
+            errors = "\n".join(f"- {e}" for e in check.errors)
             messages = messages + [{"role": "assistant", "content": reply["content"]},
                                    {"role": "user", "content": RETRY_MESSAGE.format(errors=errors)}]
-        usable = next((c for c in reversed(checks) if c.structure_ok), None)
-        if usable is None:
-            return {"status": "rejected", "result": empty_result(), "attempts": attempts,
-                    "removed_evidence": [], "removed_items": []}
-        return {"status": "cleaned", "result": without_unsupported(usable), "attempts": attempts,
-                "removed_evidence": usable.bad_evidence, "removed_items": usable.unsupported}
+        return {"attempts": attempts, **finalize(checks, text)}

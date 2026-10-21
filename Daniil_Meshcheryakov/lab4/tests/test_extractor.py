@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from extractor import Extractor, OllamaClient, check_response, find_verbatim, load_prompt, similarity
+from extractor import Extractor, OllamaClient, check_response, find_verbatim, load_prompt, parse_json, similarity
 from schema import Extraction
 
 MODEL = os.environ.get("LAB4_MODEL", "qwen3:4b-instruct-2507-q4_K_M")
@@ -35,11 +35,17 @@ def answer(**fields):
     return base
 
 
+def check_of(text, **fields):
+    return check_response(json.dumps(answer(**fields), ensure_ascii=False), text)
+
+
 @pytest.fixture(scope="module")
 def llm():
     client = OllamaClient(MODEL, OLLAMA_URL)
-    if not client.available() or not PROMPT_V2.exists():
-        pytest.skip("Ollama с моделью недоступна")
+    if not PROMPT_V2.exists():
+        pytest.skip(f"нет файла промпта {PROMPT_V2}")
+    if not client.available():
+        pytest.skip(f"Ollama с моделью {MODEL} недоступна по адресу {OLLAMA_URL}")
     return Extractor(client, load_prompt(PROMPT_V2))
 
 
@@ -62,21 +68,23 @@ def test_02_drug_not_named(llm):
                       "Пила их перед сном неделю, засыпать стала быстрее.")
     assert out["status"] != "rejected"
     assert out["result"]["drug"] == []
+    assert contains(out["result"]["positive_effect"], "засыпать стала быстрее")
 
 
 @pytest.mark.llm
 def test_03_several_drugs(llm):
-    out = llm.extract("При ангине врач назначил Амоксиклав, а горло я полоскала Мирамистином и рассасывала "
-                      "Стрепсилс. Через три дня боль в горле прошла.")
+    out = llm.extract("От бронхита пульмонолог выписал Флемоксин, на ночь я пила Синупрет, а кашель снимала "
+                      "Лазолваном. Через неделю кашель прошел.")
     drugs = out["result"]["drug"]
-    assert all(contains(drugs, name) for name in ["Амоксиклав", "Мирамистин", "Стрепсилс"])
+    assert all(contains(drugs, name) for name in ["Флемоксин", "Синупрет", "Лазолван"])
 
 
 @pytest.mark.llm
 def test_04_effect_negated(llm):
-    out = llm.extract("Пропила курс Новопассита от тревожности. Спокойнее я так и не стала, "
-                      "тревога никуда не ушла.")
+    out = llm.extract("Неделю принимала Персен перед экзаменами. Волнение никуда не делось, "
+                      "и уснуть по-прежнему было трудно.")
     assert out["status"] != "rejected"
+    assert contains(out["result"]["drug"], "Персен")
     assert out["result"]["positive_effect"] == []
 
 
@@ -84,7 +92,9 @@ def test_04_effect_negated(llm):
 def test_05_effect_supposed(llm):
     out = llm.extract("Сегодня начали давать сыну Эреспал от кашля. Думаю, через пару дней кашель станет мягче.")
     assert out["status"] != "rejected"
+    assert contains(out["result"]["drug"], "Эреспал")
     assert out["result"]["positive_effect"] == []
+    assert out["result"]["adverse_reaction"] == []
 
 
 @pytest.mark.llm
@@ -93,32 +103,33 @@ def test_06_reaction_of_other_person(llm):
                       "голова, поэтому он ее больше не покупает.")
     assert out["status"] != "rejected"
     assert out["result"]["adverse_reaction"] == []
+    assert out["result"]["positive_effect"] != []
 
 
 @pytest.mark.llm
 def test_07_text_with_quote(llm):
     text = ("Лечила цистит Монуралом. В аннотации сказано: «возможны диарея, тошнота и изжога». "
-            "У меня ничего из этого не было, на следующий день стало легче.")
+            "На следующий день стало легче.")
     out = llm.extract(text)
     assert out["status"] != "rejected"
     assert out["result"]["adverse_reaction"] == []
-    assert out["result"]["evidence"] and all(find_verbatim(e, text) == e for e in out["result"]["evidence"])
+    assert contains(out["result"]["positive_effect"], "стало легче")
 
 
 @pytest.mark.llm
 def test_08_misspelled_name(llm):
-    out = llm.extract("Пила Терафлу от простуды, через час стало легче.")
-    assert "Терафлу" in out["result"]["drug"]
+    out = llm.extract("Пила Нурафен от головной боли, через полчаса боль прошла.")
+    assert "Нурафен" in out["result"]["drug"]
 
 
 def test_09_extra_field_then_fixed():
     text = "Пила Нурофен от зубной боли, через полчаса боль прошла."
     good = answer(drug=["Нурофен"], indication=["зубной боли"], positive_effect=["боль прошла"],
                   evidence=["Пила Нурофен от зубной боли", "через полчаса боль прошла"])
-    client = FakeClient({**good, "confidence": 0.9}, good)
+    client = FakeClient({**good, "dosage": "1 таблетка"}, good)
     out = Extractor(client, BARE_PROMPT).extract(text)
     assert len(client.calls) == 2
-    assert "лишнее поле «confidence»" in client.calls[1][-1]["content"]
+    assert "лишнее поле «dosage»" in client.calls[1][-1]["content"]
     assert out["status"] == "fixed_by_retry"
     assert out["result"] == good
 
@@ -147,6 +158,12 @@ def test_schema_rejects_missing_field_and_wrong_types():
         Extraction.model_validate(answer(drug=[1]))
     with pytest.raises(ValidationError):
         Extraction.model_validate(answer(drug=["  "]))
+
+
+def test_duplicate_key_is_an_error():
+    value, error = parse_json('{"drug": ["Нурофен"], "drug": [], "indication": [], "positive_effect": [], '
+                              '"adverse_reaction": [], "evidence": []}')
+    assert value is None and "«drug» указано дважды" in error
 
 
 def test_invalid_json_gets_one_retry():
@@ -182,34 +199,89 @@ def test_verbatim_search_allows_only_whitespace_differences():
     assert find_verbatim("боль быстро прошла", text) is None
 
 
+def test_verbatim_fragment_must_not_cut_words():
+    text = "Пила Нурофен от зубной боли."
+    assert find_verbatim("урофен от зуб", text) is None
+    assert find_verbatim("а", text) is None
+    assert find_verbatim("Нурофен от зубной боли.", text) == "Нурофен от зубной боли."
+
+
 def test_item_without_evidence_is_unsupported():
-    text = "Пила Нурофен от зубной боли, через полчаса боль прошла."
-    check = check_response(json.dumps(answer(drug=["Нурофен"], adverse_reaction=["тошнота"],
-                                             evidence=["Пила Нурофен"]), ensure_ascii=False), text)
+    check = check_of("Пила Нурофен от зубной боли, через полчаса боль прошла.",
+                     drug=["Нурофен"], adverse_reaction=["тошнота"], evidence=["Пила Нурофен"])
     assert check.structure_ok and not check.ok
     assert check.unsupported == [("adverse_reaction", "тошнота")]
 
 
+def test_item_without_meaningful_words_is_rejected():
+    check = check_of("Покупала не только эти. А на обратной стороне расписан прием.",
+                     drug=["А"], evidence=["Покупала не только эти"])
+    assert check.invalid_items == [("drug", "А")]
+    assert "нет значимых слов" in check.errors[0]
+
+
 def test_drug_form_or_class_is_not_a_name():
-    text = "Купила противовирусные таблетки Арбидол."
-    check = check_response(json.dumps(answer(drug=["противовирусные таблетки", "Арбидол"],
-                                             evidence=["Купила противовирусные таблетки Арбидол"]),
-                                      ensure_ascii=False), text)
-    assert check.unsupported == [("drug", "противовирусные таблетки")]
+    check = check_of("Купила противовирусные таблетки Арбидол.",
+                     drug=["противовирусные таблетки", "Арбидол", "эти капли"],
+                     evidence=["Купила противовирусные таблетки Арбидол"])
+    assert check.invalid_items == [("drug", "противовирусные таблетки"), ("drug", "эти капли")]
     assert "не название препарата" in check.errors[0]
 
 
 def test_negation_alone_does_not_support_item():
-    text = "Сын постоянно болел, и не успевал выздороветь. Начали давать Анаферон."
-    check = check_response(json.dumps(answer(drug=["Анаферон"], positive_effect=["болезнь сына не повторялась"],
-                                             evidence=["Сын постоянно болел, и не успевал выздороветь",
-                                                       "Начали давать Анаферон"]), ensure_ascii=False), text)
+    check = check_of("Сын постоянно болел, и не успевал выздороветь. Начали давать Анаферон.",
+                     drug=["Анаферон"], positive_effect=["болезнь сына не повторялась"],
+                     evidence=["Сын постоянно болел, и не успевал выздороветь", "Начали давать Анаферон"])
     assert check.unsupported == [("positive_effect", "болезнь сына не повторялась")]
 
 
 def test_item_with_corrected_typo_is_supported():
-    text = "Мучила бессоница, врач выписал Донормил."
-    check = check_response(json.dumps(answer(drug=["Донормил"], indication=["бессонница"],
-                                             evidence=["Мучила бессоница", "врач выписал Донормил"]),
-                                      ensure_ascii=False), text)
+    check = check_of("Мучила бессоница, врач выписал Донормил.",
+                     drug=["Донормил"], indication=["бессонница"], evidence=["Мучила бессоница", "врач выписал Донормил"])
     assert check.ok
+
+
+def test_verified_items_of_first_attempt_are_kept():
+    text = "Пила Нурофен от зубной боли.\nЧерез полчаса боль прошла."
+    first = answer(drug=["Нурофен"], positive_effect=["боль прошла"], adverse_reaction=["тошнота"],
+                   evidence=["Пила Нурофен", "Через полчаса боль прошла"])
+    second = answer(drug=["Нурофен"], evidence=["Пила Нурофен"])
+    out = Extractor(FakeClient(first, second), BARE_PROMPT).extract(text)
+    assert out["status"] == "fixed_by_retry"
+    assert out["result"]["positive_effect"] == ["боль прошла"]
+    assert out["result"]["adverse_reaction"] == []
+    assert out["removed_items"] == [("adverse_reaction", "тошнота")]
+
+
+def test_item_supported_by_fragment_of_other_attempt():
+    text = "Четвертый день тошнота, рвота и озноб после приема Донормила."
+    first = answer(drug=["Донормил"], adverse_reaction=["тошнота", "рвота", "озноб"],
+                   evidence=["четвертый день тошнота", "после приема Донормила"])
+    second = answer(drug=["Донормил"], adverse_reaction=["тошнота"],
+                    evidence=["Четвертый день тошнота, рвота и озноб", "после приема Донормила"])
+    out = Extractor(FakeClient(first, second), BARE_PROMPT).extract(text)
+    assert out["status"] == "fixed_by_retry"
+    assert out["result"]["adverse_reaction"] == ["тошнота", "рвота", "озноб"]
+
+
+def test_same_item_from_two_attempts_is_kept_once():
+    text = "Пил Кавинтон, потом Кавинтон форте.\nЗаболела сильно правая нога."
+    first = answer(drug=["Кавинтон", "Кавинтон форте"], adverse_reaction=["заболела правая нога", "тошнота"],
+                   evidence=["Пил Кавинтон, потом Кавинтон форте", "Заболела сильно правая нога"])
+    second = answer(drug=["Кавинтон", "Кавинтон форте"], adverse_reaction=["заболела сильно правая нога"],
+                    evidence=["Пил Кавинтон, потом Кавинтон форте", "Заболела сильно правая нога"])
+    out = Extractor(FakeClient(first, second), BARE_PROMPT).extract(text)
+    assert out["status"] == "fixed_by_retry"
+    assert out["result"]["drug"] == ["Кавинтон", "Кавинтон форте"]
+    assert out["result"]["adverse_reaction"] == ["заболела сильно правая нога"]
+
+
+def test_drug_without_fragment_is_grounded_in_text_but_effect_is_not():
+    text = "Врач посоветовал Лемсип.\nПроходит головная боль."
+    bad = answer(drug=["Лемсип"], indication=["гриппе"], positive_effect=["проходит головная боль"],
+                 evidence=["Врач посоветовал"])
+    out = Extractor(FakeClient(bad, bad), BARE_PROMPT).extract(text)
+    assert out["status"] == "cleaned"
+    assert out["result"]["drug"] == ["Лемсип"] and "Врач посоветовал Лемсип." in out["result"]["evidence"]
+    assert out["grounded_items"] == [("drug", "Лемсип")]
+    assert out["result"]["indication"] == [] and out["result"]["positive_effect"] == []
