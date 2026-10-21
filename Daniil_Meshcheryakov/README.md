@@ -11,6 +11,7 @@
 | № | Тема | Папка |
 |---|------|-------|
 | 1 | Один текст - разные представления (RuSentiment: BoW, TF-IDF, sentence embeddings) | [lab1](lab1) |
+| 4 | Промпт как программа (RuDReC: извлечение сущностей, Pydantic, pytest, Qwen3-4B через Ollama) | [lab4](lab4) |
 
 ## Лабораторная 1
 
@@ -34,3 +35,7 @@ cd lab1
 ../.venv/Scripts/jupyter nbconvert --to notebook --execute --inplace lab1.ipynb
 ../.venv/Scripts/python build_report.py
 ```
+
+## Лабораторная 4
+
+Состав файлов и порядок запуска описаны в [lab4/README.md](lab4/README.md). Нужна локальная модель в Ollama, окружение то же.

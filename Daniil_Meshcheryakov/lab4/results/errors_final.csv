@@ -1,0 +1,194 @@
+﻿id,field,kind,value
+618094,indication,FN,гипертония
+618094,indication,FN,микро-инсульт
+618094,indication,FN,парализовало левую сторону
+618094,indication,FN,шум в ушах
+618094,indication,FN,проблеммы с ЦНС
+618094,positive_effect,FP,очень помог ему
+618094,positive_effect,FN,немного отпустило
+1325273,drug,FN,кагоцел
+1325273,drug,FN,цитовир
+1325273,drug,FN,лактофильтрум
+1325273,indication,FN,Температура
+1325273,adverse_reaction,FP,х. з куда
+1325273,adverse_reaction,FN,мондраш волнами
+1325273,adverse_reaction,FN,давление 130
+1325273,adverse_reaction,FN,давлением
+939631,drug,FN,Полиоксидоний
+939631,indication,FP,болезнь дочки
+913153,drug,FN,звездочку
+940903,indication,FN,засыпанием
+940903,indication,FN,гастрита
+940903,indication,FN,плохо спать
+940903,indication,FN,нервничать
+940903,positive_effect,FP,успокаивает
+940903,positive_effect,FN,Настроился режим сна
+940903,adverse_reaction,FN,Успокаивает
+2723162,indication,FP,выход из дома
+978728,drug,FN,пустырник
+978728,drug,FN,валерианка
+978728,drug,FN,боярышник
+978728,indication,FN,сном
+978728,indication,FN,высокий холестерин
+978728,indication,FN,бесоницы
+978728,indication,FN,засыпания
+978728,indication,FN,уснуть
+978728,indication,FN,не мог спать
+978728,positive_effect,FP,бесоницы больше нет
+978728,positive_effect,FN,усыпляет
+978728,adverse_reaction,FN,с трудом проснувшись
+893416,indication,FN,усталость
+893416,adverse_reaction,FN,расслабляет
+893416,adverse_reaction,FN,засыпаешь
+310056,indication,FP,вакцинация
+310056,positive_effect,FP,перенес вакцинацию хорошо
+310056,adverse_reaction,FN,головокружения
+310056,adverse_reaction,FN,боли
+310056,adverse_reaction,FN,рвотные позывы
+310056,adverse_reaction,FN,температура
+2460834,indication,FN,спали отвратительно
+2460834,indication,FN,ночью ребенок просыпался
+2460834,indication,FN,громко кричал
+2460834,indication,FN,усиление крика
+2460834,indication,FN,сон
+2460834,indication,FN,криков таких не было
+2460834,positive_effect,FP,ребенок спал уже практически всю ночь
+2460834,positive_effect,FN,сон немного нормализовался
+2460834,positive_effect,FN,криков таких не было
+2443740,drug,FN,пустырника
+2443740,indication,FN,несколько раз за ночь просыпаюсь
+2443740,indication,FN,не сплю
+2443740,adverse_reaction,FN,глаза просто закрываются
+2443740,adverse_reaction,FN,ночью словно второе дыхание открывается
+1097205,indication,FP,снотворного
+1097205,indication,FN,заснуть
+1097205,adverse_reaction,FN,интоксикации
+1097205,adverse_reaction,FN,диарея
+1097205,adverse_reaction,FN,рвота
+1097205,adverse_reaction,FN,несосредоточенность за рулем
+1097205,adverse_reaction,FN,потовыделение
+1097205,adverse_reaction,FN,ознобом
+1097205,adverse_reaction,FN,Отсутствие аппетита
+2398170,indication,FN,профилактики
+2398170,indication,FN,соплями
+2398170,indication,FN,недомоганием
+2398170,positive_effect,FN,обходились лишь соплями или легким недомоганием
+1730783,drug,FN,ИРС
+2424525,indication,FN,отсутствие речи
+2424525,adverse_reaction,FN,стоит на ушах
+2424525,adverse_reaction,FN,угомонить невозможно
+2424525,adverse_reaction,FN,сон днем забыли
+2424525,adverse_reaction,FN,беготня по дому
+2424525,adverse_reaction,FN,прыжки с дивана на пол
+2424525,adverse_reaction,FN,кувырки
+2424525,adverse_reaction,FN,вымотанный
+811884,drug,FN,Лемсип
+811884,drug,FN,парацетамол
+811884,drug,FN,аскорбиновая кислота
+811884,indication,FN,боли в горле
+811884,indication,FN,головную боль
+811884,indication,FN,простуды
+811884,indication,FN,гриппа
+811884,positive_effect,FN,проходит головная боль
+2883218,adverse_reaction,FP,ухо
+2883218,adverse_reaction,FN,боль в горле
+618939,drug,FN,ваксигрипп
+618939,drug,FN,гриппола
+618939,positive_effect,FP,общее самочувствие лучше
+641485,indication,FN,Простыла
+641485,adverse_reaction,FP,только еще хуже стало
+2661222,indication,FN,заснуть по ночам
+2661222,indication,FN,заснуть
+2661222,indication,FN,сном
+2661222,indication,FN,плохо засыпаю
+2661222,indication,FN,сну
+2450361,indication,FN,простудилась
+2450361,indication,FN,слабость
+893239,indication,FN,простыла
+893239,indication,FN,заложенности носа
+893239,positive_effect,FN,нос пробило
+893239,adverse_reaction,FN,нос пробило
+893239,adverse_reaction,FN,аллергия
+3396668,indication,FN,температура
+3396668,positive_effect,FN,практически не болею
+811512,drug,FN,Тенотен
+811512,indication,FN,стрессы
+811512,indication,FN,страх
+811512,indication,FN,переживал
+811512,indication,FN,неуверенность в себе
+2407176,indication,FN,поднялась температура
+2407176,indication,FN,температура
+2407176,indication,FN,кашля
+2407176,indication,FN,соплей
+2407176,indication,FN,ОРВИ
+2407176,indication,FN,бактериальной инфекции
+2407176,positive_effect,FN,состояние улучшилось
+2407176,adverse_reaction,FP,температура резко поднялась
+2671137,drug,FN,"Грипоцитрон ХОТ ""Лимон"""
+1058674,indication,FN,простудных заболеваний
+1058674,adverse_reaction,FN,аллергия
+2015980,adverse_reaction,FP,начала болеть простудой постоянно
+2015980,adverse_reaction,FP,проблемы с желудком
+2015980,adverse_reaction,FN,простудой
+624086,drug,FN,Анаферон
+624086,indication,FN,поднялась температура
+624086,indication,FN,Температура
+624086,indication,FN,резались зубки
+1111461,indication,FP,речь
+1111461,positive_effect,FP,повторять все что слышит
+1111461,adverse_reaction,FP,заболела левая нога
+6993980,drug,FP,А
+2538754,indication,FN,нервы шалили
+2538754,indication,FN,раздрожительность
+2538754,indication,FN,плаксивость
+2538754,positive_effect,FN,плаксивость
+2538754,adverse_reaction,FN,спокойней
+2703065,drug,FP,этот противовирусный препарат
+2703065,indication,FN,вирусным заболеванием
+2703065,indication,FN,сопли
+2703065,indication,FN,чихание
+2703065,indication,FN,слезятся глаза
+2703065,indication,FN,болит горло
+2703065,indication,FN,постуды
+1089645,indication,FN,проффилактических
+1089645,positive_effect,FN,при легких формах заболевания помогали
+1089645,positive_effect,FN,все обошлось
+656330,positive_effect,FN,Когда помогал
+2418485,drug,FN,анаферон детский
+2418485,drug,FN,виферон
+2418485,drug,FN,кипферон
+2418485,drug,FN,эргоферон
+2418485,indication,FN,ОРВИ
+591905,drug,FN,Гриппеферон
+591905,indication,FN,гриппом
+2597892,positive_effect,FP,ребенок ожил
+2597892,positive_effect,FP,попросил кушать
+2597892,positive_effect,FP,танцует и радуется жизни
+2597892,adverse_reaction,FP,ужас
+2597892,adverse_reaction,FN,кидание игрушками
+2597892,adverse_reaction,FN,не могла разбудить
+2597892,adverse_reaction,FN,проснулсябледный
+2597892,adverse_reaction,FN,ничего нерадовало
+2685800,indication,FN,стрессами
+2685800,adverse_reaction,FP,запах
+2685800,adverse_reaction,FN,боль в сердце
+2502253,indication,FN,сном
+2502253,indication,FN,глазки не смыкаю
+2502253,indication,FN,хожу потом как ЗОМБИ
+2502253,indication,FN,неврозов
+2502253,indication,FN,выспаться
+2502253,positive_effect,FP,эффект от приема таблеток- НУЛЕВОЙ
+2515768,drug,FN,антигриппин
+2515768,indication,FN,температуру
+2515768,indication,FN,жар
+2515768,indication,FN,простуда
+2515768,positive_effect,FN,чесаться перестало
+2515768,positive_effect,FN,покраснение пошло на спад
+2515768,positive_effect,FN,Вылечился
+2515768,adverse_reaction,FN,аллергией
+2515768,adverse_reaction,FN,чесаться
+2515768,adverse_reaction,FN,покраснение
+2555494,drug,FN,Цитовир-3
+2555494,indication,FP,раннего лечения ОРВИ и Гриппа
+2555494,indication,FN,ОРВИ
+2555494,indication,FN,Гриппа

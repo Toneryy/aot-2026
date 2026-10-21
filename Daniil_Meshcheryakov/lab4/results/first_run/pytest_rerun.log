@@ -1,0 +1,45 @@
+============================= test session starts =============================
+collecting ... collected 16 items
+
+tests/test_extractor.py::test_01_empty_text PASSED                       [  6%]
+tests/test_extractor.py::test_02_drug_not_named FAILED                   [ 12%]
+tests/test_extractor.py::test_03_several_drugs PASSED                    [ 18%]
+tests/test_extractor.py::test_04_effect_negated PASSED                   [ 25%]
+tests/test_extractor.py::test_05_effect_supposed PASSED                  [ 31%]
+tests/test_extractor.py::test_06_reaction_of_other_person PASSED         [ 37%]
+tests/test_extractor.py::test_07_text_with_quote PASSED                  [ 43%]
+tests/test_extractor.py::test_08_misspelled_name PASSED                  [ 50%]
+tests/test_extractor.py::test_09_extra_field_then_fixed PASSED           [ 56%]
+tests/test_extractor.py::test_10_evidence_not_in_text_only_one_retry PASSED [ 62%]
+tests/test_extractor.py::test_schema_rejects_missing_field_and_wrong_types PASSED [ 68%]
+tests/test_extractor.py::test_invalid_json_gets_one_retry PASSED         [ 75%]
+tests/test_extractor.py::test_broken_structure_twice_is_rejected PASSED  [ 81%]
+tests/test_extractor.py::test_valid_answer_needs_no_retry PASSED         [ 87%]
+tests/test_extractor.py::test_verbatim_search_allows_only_whitespace_differences PASSED [ 93%]
+tests/test_extractor.py::test_item_without_evidence_is_unsupported PASSED [100%]
+
+================================== FAILURES ===================================
+___________________________ test_02_drug_not_named ____________________________
+
+llm = <extractor.Extractor object at 0x000001C6FA37E090>
+
+    @pytest.mark.llm
+    def test_02_drug_not_named(llm):
+        out = llm.extract("Купила в аптеке успокоительные капли, название уже не помню. "
+                          "Пила их перед сном неделю, засыпать стала быстрее.")
+        assert out["status"] != "rejected"
+>       assert out["result"]["drug"] == []
+E       AssertionError: assert ['успокоительные капли'] == []
+E         
+E         Left contains one more item: 'успокоительные капли'
+E         
+E         Full diff:
+E         - []
+E         + [
+E         +     'успокоительные капли',
+E         + ]
+
+tests\test_extractor.py:64: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_extractor.py::test_02_drug_not_named - AssertionError: asse...
+======================== 1 failed, 15 passed in 9.96s =========================

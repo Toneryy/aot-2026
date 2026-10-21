@@ -3,5 +3,6 @@ __pycache__/
 .ipynb_checkpoints/
 ~$*
 
-lab*/data/
+lab1/data/
+lab4/data/raw/
 lab1/outputs/sample_150.csv

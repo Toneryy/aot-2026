@@ -1,0 +1,77 @@
+=== запуск 1
+============================= test session starts =============================
+collecting ... collected 19 items
+
+tests/test_extractor.py::test_01_empty_text PASSED                       [  5%]
+tests/test_extractor.py::test_02_drug_not_named PASSED                   [ 10%]
+tests/test_extractor.py::test_03_several_drugs PASSED                    [ 15%]
+tests/test_extractor.py::test_04_effect_negated PASSED                   [ 21%]
+tests/test_extractor.py::test_05_effect_supposed PASSED                  [ 26%]
+tests/test_extractor.py::test_06_reaction_of_other_person PASSED         [ 31%]
+tests/test_extractor.py::test_07_text_with_quote PASSED                  [ 36%]
+tests/test_extractor.py::test_08_misspelled_name PASSED                  [ 42%]
+tests/test_extractor.py::test_09_extra_field_then_fixed PASSED           [ 47%]
+tests/test_extractor.py::test_10_evidence_not_in_text_only_one_retry PASSED [ 52%]
+tests/test_extractor.py::test_schema_rejects_missing_field_and_wrong_types PASSED [ 57%]
+tests/test_extractor.py::test_invalid_json_gets_one_retry PASSED         [ 63%]
+tests/test_extractor.py::test_broken_structure_twice_is_rejected PASSED  [ 68%]
+tests/test_extractor.py::test_valid_answer_needs_no_retry PASSED         [ 73%]
+tests/test_extractor.py::test_verbatim_search_allows_only_whitespace_differences PASSED [ 78%]
+tests/test_extractor.py::test_item_without_evidence_is_unsupported PASSED [ 84%]
+tests/test_extractor.py::test_drug_form_or_class_is_not_a_name PASSED    [ 89%]
+tests/test_extractor.py::test_negation_alone_does_not_support_item PASSED [ 94%]
+tests/test_extractor.py::test_item_with_corrected_typo_is_supported PASSED [100%]
+
+============================= 19 passed in 9.84s ==============================
+
+=== запуск 2
+============================= test session starts =============================
+collecting ... collected 19 items
+
+tests/test_extractor.py::test_01_empty_text PASSED                       [  5%]
+tests/test_extractor.py::test_02_drug_not_named PASSED                   [ 10%]
+tests/test_extractor.py::test_03_several_drugs PASSED                    [ 15%]
+tests/test_extractor.py::test_04_effect_negated PASSED                   [ 21%]
+tests/test_extractor.py::test_05_effect_supposed PASSED                  [ 26%]
+tests/test_extractor.py::test_06_reaction_of_other_person PASSED         [ 31%]
+tests/test_extractor.py::test_07_text_with_quote PASSED                  [ 36%]
+tests/test_extractor.py::test_08_misspelled_name PASSED                  [ 42%]
+tests/test_extractor.py::test_09_extra_field_then_fixed PASSED           [ 47%]
+tests/test_extractor.py::test_10_evidence_not_in_text_only_one_retry PASSED [ 52%]
+tests/test_extractor.py::test_schema_rejects_missing_field_and_wrong_types PASSED [ 57%]
+tests/test_extractor.py::test_invalid_json_gets_one_retry PASSED         [ 63%]
+tests/test_extractor.py::test_broken_structure_twice_is_rejected PASSED  [ 68%]
+tests/test_extractor.py::test_valid_answer_needs_no_retry PASSED         [ 73%]
+tests/test_extractor.py::test_verbatim_search_allows_only_whitespace_differences PASSED [ 78%]
+tests/test_extractor.py::test_item_without_evidence_is_unsupported PASSED [ 84%]
+tests/test_extractor.py::test_drug_form_or_class_is_not_a_name PASSED    [ 89%]
+tests/test_extractor.py::test_negation_alone_does_not_support_item PASSED [ 94%]
+tests/test_extractor.py::test_item_with_corrected_typo_is_supported PASSED [100%]
+
+============================= 19 passed in 9.85s ==============================
+
+=== запуск 3
+============================= test session starts =============================
+collecting ... collected 19 items
+
+tests/test_extractor.py::test_01_empty_text PASSED                       [  5%]
+tests/test_extractor.py::test_02_drug_not_named PASSED                   [ 10%]
+tests/test_extractor.py::test_03_several_drugs PASSED                    [ 15%]
+tests/test_extractor.py::test_04_effect_negated PASSED                   [ 21%]
+tests/test_extractor.py::test_05_effect_supposed PASSED                  [ 26%]
+tests/test_extractor.py::test_06_reaction_of_other_person PASSED         [ 31%]
+tests/test_extractor.py::test_07_text_with_quote PASSED                  [ 36%]
+tests/test_extractor.py::test_08_misspelled_name PASSED                  [ 42%]
+tests/test_extractor.py::test_09_extra_field_then_fixed PASSED           [ 47%]
+tests/test_extractor.py::test_10_evidence_not_in_text_only_one_retry PASSED [ 52%]
+tests/test_extractor.py::test_schema_rejects_missing_field_and_wrong_types PASSED [ 57%]
+tests/test_extractor.py::test_invalid_json_gets_one_retry PASSED         [ 63%]
+tests/test_extractor.py::test_broken_structure_twice_is_rejected PASSED  [ 68%]
+tests/test_extractor.py::test_valid_answer_needs_no_retry PASSED         [ 73%]
+tests/test_extractor.py::test_verbatim_search_allows_only_whitespace_differences PASSED [ 78%]
+tests/test_extractor.py::test_item_without_evidence_is_unsupported PASSED [ 84%]
+tests/test_extractor.py::test_drug_form_or_class_is_not_a_name PASSED    [ 89%]
+tests/test_extractor.py::test_negation_alone_does_not_support_item PASSED [ 94%]
+tests/test_extractor.py::test_item_with_corrected_typo_is_supported PASSED [100%]
+
+============================= 19 passed in 10.42s =============================
